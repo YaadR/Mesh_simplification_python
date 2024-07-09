@@ -14,7 +14,8 @@ class a_3d_model:
         self.calculate_plane_equations()
         self.calculate_Q_matrices()
         
-    def load_obj_file(self):
+    def _load_obj_file(self):
+        
         with open(self.model_filepath) as file:
             self.points = []
             self.faces = []
@@ -37,6 +38,53 @@ class a_3d_model:
         self.edges=np.concatenate([edge_1, edge_2, edge_3], axis=0)
         unique_edges_trans, unique_edges_locs=np.unique(self.edges[:,0]*(10**10)+self.edges[:,1], return_index=True)
         self.edges=self.edges[unique_edges_locs,:]
+    
+    def load_obj_file(self):
+        with open(self.model_filepath) as file:
+            self.points = []
+            self.faces = []
+            while True:
+                line = file.readline().strip()
+                if not line:
+                    break
+                strs = line.split()
+                if len(strs) == 0:
+                    continue
+                if strs[0] == "v":
+                    try:
+                        self.points.append((float(strs[1]), float(strs[2]), float(strs[3])))
+                    except ValueError as e:
+                        print(f"Error parsing vertex line: {line} -> {e}")
+                elif strs[0] == "f":
+                    face = []
+                    for f in strs[1:]:
+                        try:
+                            face.append(int(f.split('/')[0]))  # Only take the vertex index, ignoring texture and normal indices
+                        except ValueError as e:
+                            print(f"Error parsing face line: {line} -> {e}")
+                    if len(face) == 3:
+                        self.faces.append(tuple(face))
+                    else:
+                        print(f"Skipping non-triangular face: {face}")
+                elif strs[0] != "v":
+                    pass
+        
+        self.points = np.array(self.points)
+        self.faces = np.array(self.faces, dtype=int)
+        print(f"Points: {self.points.shape}, Faces: {self.faces.shape}")
+        
+        if self.faces.shape[0] == 0:
+            print("No faces were loaded. Please check the OBJ file format and face definitions.")
+        
+        self.number_of_points = self.points.shape[0]
+        self.number_of_faces = self.faces.shape[0]
+        edge_1 = self.faces[:, 0:2]
+        edge_2 = self.faces[:, 1:]
+        edge_3 = np.concatenate([self.faces[:, :1], self.faces[:, -1:]], axis=1)
+        self.edges = np.concatenate([edge_1, edge_2, edge_3], axis=0)
+        unique_edges_trans, unique_edges_locs = np.unique(self.edges[:, 0] * (10**10) + self.edges[:, 1], return_index=True)
+        self.edges = self.edges[unique_edges_locs, :]
+    
     
     def calculate_plane_equations(self):
         self.plane_equ_para = []
