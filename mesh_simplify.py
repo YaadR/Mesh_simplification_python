@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-@author: Anton Wang
-"""
-
 import argparse
 import numpy as np
 import os
@@ -19,8 +14,8 @@ import os
 # threshold=args.t
 # simplify_ratio=args.r
 
-input_filepath='models/Venus.obj'
-output_filepath='Venus_simp_01_1.obj'
+input_filepath='models/kitten.obj'
+output_filepath='kitten_simp_01_1.obj'
 threshold=np.float32(1)
 simplify_ratio=np.float32(0.01)
 

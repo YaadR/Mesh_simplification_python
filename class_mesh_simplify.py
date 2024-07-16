@@ -1,11 +1,7 @@
-# -*- coding: utf-8 -*-
-"""
-@author: Anton Wang
-"""
-
 import numpy as np
 import sys
 from mayavi import mlab
+import tqdm
 # import trimesh
 
 from class_3d_model import a_3d_model
@@ -37,7 +33,8 @@ class mesh_simplify(a_3d_model):
     # Select all valid pairs.
     def generate_valid_pairs(self):
         self.dist_pairs = []
-        for i in range(0, self.number_of_points):
+        # for i in range(0, self.number_of_points):
+        for i in tqdm(range(self.number_of_points), desc="Generate Valid Pairs"):
             current_point_location=i+1
             current_point=self.points[i,:]
             current_point_to_others_dist=(np.sum((self.points-current_point)**2,axis=1))**0.5

@@ -1,11 +1,6 @@
-# -*- coding: utf-8 -*-
-"""
-@author: Anton Wang
-"""
-
 # 3D model class
-
 import numpy as np
+import tqdm
 
 class a_3d_model:
     def __init__(self, filepath):
@@ -88,7 +83,8 @@ class a_3d_model:
     
     def calculate_plane_equations(self):
         self.plane_equ_para = []
-        for i in range(0, self.number_of_faces):
+        #for i in range(0, self.number_of_faces):
+        for i in tqdm(range(self.number_of_faces), desc="Calculating Plane Equations"):
             # solving equation ax+by+cz+d=0, a^2+b^2+c^2=1
             # set d=-1, give three points (x1, y1 ,z1), (x2, y2, z2), (x3, y3, z3)
             point_1=self.points[self.faces[i,0]-1, :]
@@ -102,7 +98,8 @@ class a_3d_model:
     
     def calculate_Q_matrices(self):
         self.Q_matrices = []
-        for i in range(0, self.number_of_points):
+        # for i in range(0, self.number_of_points):
+        for i in tqdm(range(self.number_of_points), desc="Calculating Q Matrices"):
             point_index=i+1
             # each point is the solution of the intersection of a set of planes
             # find the planes for point_index
